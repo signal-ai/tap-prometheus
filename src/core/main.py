@@ -31,6 +31,8 @@ def construct_schema(queries_results):
     for label in prefixed_labels:
         schema["properties"][label] = {'type': 'string'}
 
+    return schema
+
 def output_results(queries_results, extraction_time=singer.utils.now()):
     for (query_id, results) in queries_results.items():
         for vector in results.vectors:
