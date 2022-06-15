@@ -8,87 +8,67 @@ from singer import metadata
 
 from promalyze import Client
 
-client = Client("http://prometheus-a.signal")
-
 LOGGER = singer.get_logger()
 
-def main_range():
-    #args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+REQUIRED_CONFIG_KEYS = [
+    'queries', 'prometheus_endpoint'
+]
 
-    query = "slo:sli_error:ratio_rate1d"
+STREAM_NAME = "prometheus_query_results"
 
-    start_time = 1655123817 # yesterday
-    day = 86400 #day
-    step = day
+def construct_schema(queries_results):
+    all_labels = set()
+    for (query_id, result) in queries_results.items():
+        for vector in result.vectors:
+            all_labels.update(vector.metadata.keys())
 
-    end_time =  start_time + day # today
-
-    ts_data = client.range_query(
-        query,
-        start=start_time,
-        end=end_time,
-        step=step
-    )
-
-    print(ts_data.timeseries[0].as_json())
-
-
-# {'query_id': 'sli_error_rate',
-#  'value': "0.0001234",
-#  'timestamp': 1655123817,
-#  'labels__sloth_slo': "worker_prod_sentence_sentiment_prediction_v2_latency_99_percent_documents_processed_within_6_seconds"
-#  }
-def get_prometheus_data():
-    query = "slo:sli_error:ratio_rate1d"
-
-    start_time = 1655123817 # yesterday
-    day = 86400 #day
-    step = day
-
-    end_time =  start_time + day # today
-
-    ts_data = client.instant_query(
-        query,
-        params={"time": start_time}
-    )
-
-    print(ts_data.as_json())
-    print(ts_data.vectors[0].value)
-
-    return ts_data
-
-def main():
-    #args = utils.parse_args(REQUIRED_CONFIG_KEYS)
-
-
-    # config: {query_id: query}
-    {'sli_error_rate': "slo:sli_error:ratio_rate1d"}
-    stream_name = "prometheus_query_results"
+    prefixed_labels = [f"labels__{label}" for label in all_labels]
     schema = {'properties': {'id': {'type': 'string'},
                              'query_id': {'type': 'string'},
                              'value': {'type': 'string'},
-                             'timestamp': {'type': 'long'},
-                             'labels__sloth_slo': {'type': 'string'}
-                             }}
+                             'timestamp': {'type': 'long'}}}
 
-    singer.write_schema(stream_name, schema, ['id'])
+    for label in prefixed_labels:
+        schema["properties"][label] = {'type': 'string'}
 
-    test_record =  {'id': "blabla",
-                    'query_id': 'sli_error_rate',
-                    'value': "0.0001234",
-                    'timestamp': 1655123817,
-                    'labels__sloth_slo': "worker_prod_sentence_sentiment_prediction_v2_latency_99_percent_documents_processed_within_6_seconds"
-                    }
+def output_results(queries_results, extraction_time=singer.utils.now()):
+    for (query_id, results) in queries_results.items():
+        for vector in results.vectors:
+            record = {'id': "blabla",
+                      'query_id': query_id,
+                      'value': vector.value,
+                      'timestamp': vector.timestamp}
+            print(f"META{vector.metadata}")
+            for (label_name, label_value) in vector.metadata.items():
+                record[f"label__{label_name}"] = label_value
+
+            singer.write_record(STREAM_NAME,
+                                record,
+                                time_extracted=extraction_time)
+
+def main():
+    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+
+    queries = args.config['queries']
+    client = Client(args.config['prometheus_endpoint'])
+
+    queries_results = {}
     extraction_time = singer.utils.now()
-    singer.write_record(stream_name,
-                        test_record,
-                        time_extracted=extraction_time
-                    )
-    singer.write_record(stream_name,
-                        test_record,
-                        time_extracted=extraction_time
-                    )
 
+    for (query_id, query) in queries.items():
+        if(query["type"]=="instant"):
+            queries_results[query_id] = client.instant_query(
+                query["query"],
+                params={"time": query["params"]["time"]}
+            )
+        else:
+            raise Exception(f"Unsupported query type: {query['type']}. Only 'instant' queries are supported.")
+
+    schema = construct_schema(queries_results)
+
+    singer.write_schema(STREAM_NAME, schema, ['id'])
+
+    output_results(queries_results, extraction_time)
 
 
 if __name__ == '__main__':

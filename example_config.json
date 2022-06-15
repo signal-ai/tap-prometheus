@@ -1,0 +1,4 @@
+{"prometheus_endpoint": "http://prometheus-a.signal",
+ "queries":{"sli_error_rate_1d":{"query": "slo:sli_error:ratio_rate1d",
+                                 "type": "instant",
+                                 "params": {"time": 1655123817}}}}
