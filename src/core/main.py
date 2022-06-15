@@ -1,10 +1,10 @@
 from datetime import datetime
 import os
 import json
+import uuid
 
 import singer
-from singer import utils, Transformer
-from singer import metadata
+from singer import utils
 
 from promalyze import Client
 
@@ -34,11 +34,10 @@ def construct_schema(queries_results):
 def output_results(queries_results, extraction_time=singer.utils.now()):
     for (query_id, results) in queries_results.items():
         for vector in results.vectors:
-            record = {'id': "blabla",
+            record = {'id': str(uuid.uuid4()),
                       'query_id': query_id,
                       'value': vector.value,
                       'timestamp': vector.timestamp}
-            print(f"META{vector.metadata}")
             for (label_name, label_value) in vector.metadata.items():
                 record[f"label__{label_name}"] = label_value
 
