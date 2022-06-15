@@ -11,7 +11,7 @@ from promalyze import Client
 LOGGER = singer.get_logger()
 
 REQUIRED_CONFIG_KEYS = [
-    'queries', 'prometheus_endpoint'
+    'queries', 'prometheus_endpoint', 'queries_timestamp'
 ]
 
 STREAM_NAME = "prometheus_query_results"
@@ -52,18 +52,16 @@ def main():
 
     queries = args.config['queries']
     client = Client(args.config['prometheus_endpoint'])
+    queries_timestamp = args.config['queries_timestamp']
 
     queries_results = {}
     extraction_time = singer.utils.now()
 
     for (query_id, query) in queries.items():
-        if(query["type"]=="instant"):
-            queries_results[query_id] = client.instant_query(
-                query["query"],
-                params={"time": query["params"]["time"]}
-            )
-        else:
-            raise Exception(f"Unsupported query type: {query['type']}. Only 'instant' queries are supported.")
+        queries_results[query_id] = client.instant_query(
+            query,
+            params={"time": queries_timestamp}
+        )
 
     schema = construct_schema(queries_results)
 
