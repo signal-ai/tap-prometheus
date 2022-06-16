@@ -11,7 +11,7 @@ from promalyze import Client
 LOGGER = singer.get_logger()
 
 REQUIRED_CONFIG_KEYS = [
-    'queries', 'prometheus_endpoint', 'queries_timestamp'
+    'queries', 'prometheus_endpoint', 'start_date'
 ]
 
 STREAM_NAME = "prometheus_query_results"
@@ -52,7 +52,7 @@ def main():
 
     queries = args.config['queries']
     client = Client(args.config['prometheus_endpoint'])
-    queries_timestamp = args.config['queries_timestamp']
+    start_date = args.config['start_date']
 
     queries_results = {}
     extraction_time = singer.utils.now()
@@ -60,7 +60,7 @@ def main():
     for (query_id, query) in queries.items():
         queries_results[query_id] = client.instant_query(
             query,
-            params={"time": queries_timestamp}
+            params={"time": start_date}
         )
 
     schema = construct_schema(queries_results)
