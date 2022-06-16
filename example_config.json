@@ -1,4 +1,5 @@
 {
+    "stream_name": "prometheus",
     "prometheus_endpoint": "http://my-prometheus.my-domain",
     "start_date": "2022-06-16T00:00:00Z",
     "queries":{"my_query_id":"my_promql_query"}

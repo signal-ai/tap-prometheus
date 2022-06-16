@@ -11,10 +11,8 @@ from promalyze import Client
 LOGGER = singer.get_logger()
 
 REQUIRED_CONFIG_KEYS = [
-    'queries', 'prometheus_endpoint', 'start_date'
+    'queries', 'prometheus_endpoint', 'start_date', 'stream_name'
 ]
-
-STREAM_NAME = "prometheus_query_results"
 
 def construct_schema(queries_results):
     all_labels = set()
@@ -33,7 +31,7 @@ def construct_schema(queries_results):
 
     return schema
 
-def output_results(queries_results, extraction_time=singer.utils.now()):
+def output_results(stream_name, queries_results, extraction_time=singer.utils.now()):
     for (query_id, results) in queries_results.items():
         for vector in results.vectors:
             record = {'id': str(uuid.uuid4()),
@@ -43,7 +41,7 @@ def output_results(queries_results, extraction_time=singer.utils.now()):
             for (label_name, label_value) in vector.metadata.items():
                 record[f"label__{label_name}"] = label_value
 
-            singer.write_record(STREAM_NAME,
+            singer.write_record(stream_name,
                                 record,
                                 time_extracted=extraction_time)
 
@@ -53,6 +51,7 @@ def main():
     queries = args.config['queries']
     client = Client(args.config['prometheus_endpoint'])
     start_date = args.config['start_date']
+    stream_name = args.config['stream_name']
 
     queries_results = {}
     extraction_time = singer.utils.now()
@@ -65,9 +64,9 @@ def main():
 
     schema = construct_schema(queries_results)
 
-    singer.write_schema(STREAM_NAME, schema, ['id'])
+    singer.write_schema(stream_name, schema, ['id'])
 
-    output_results(queries_results, extraction_time)
+    output_results(stream_name, queries_results, extraction_time)
 
 
 if __name__ == '__main__':

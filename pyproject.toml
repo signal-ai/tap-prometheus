@@ -7,6 +7,9 @@ authors = ["Signal AI"]
 repository = "https://github.com/signal-ai/tap-prometheus"
 homepage = "https://github.com/signal-ai/tap-prometheus"
 
+[tool.poetry.scripts]
+tap-prometheus = "tap_prometheus:main"
+
 [tool.poetry.dependencies]
 python = "~3.7.10"
 singer-python = "5.12.2"

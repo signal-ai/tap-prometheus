@@ -16,6 +16,7 @@ To start the project, run `make start`. This uses an example config in `example_
 Configuration is as follows:
 ```json
 {
+    "stream_name": "prometheus",
     "prometheus_endpoint": "http://prometheus-a.mydomain",
     "start_date": "2022-06-16T00:00:00Z",
     "queries":{"my_query_id":"my_promql_query"}

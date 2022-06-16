@@ -4,6 +4,8 @@ poetry_version  = 1.1.13
 
 image_url       = tap-prometheus:latest
 
+config = example_config.json
+
 .PHONY: install-tools
 install-tools: ## installs tools which are used by other make targets
 	@POETRY_VERSION=$(poetry_version) ./dev/install-tools.sh
@@ -35,8 +37,8 @@ build-docker:
 
 .PHONY: start-docker
 start-docker:
-	@docker container run -v $$(pwd):/srv  tap-prometheus:latest python src/core/main.py -c example_config.json
+	@docker container run -v $$(pwd):/srv  tap-prometheus:latest poetry run tap-prometheus -c $(config)
 
 .PHONY: start
 start:
-	poetry run python src/core/main.py -c example_config.json
+	poetry run tap-prometheus -c $(config)
