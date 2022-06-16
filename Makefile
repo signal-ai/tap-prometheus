@@ -2,9 +2,8 @@ python_version  = 3.7.10
 pip_version     = 21.1.1
 poetry_version  = 1.1.13
 
-image_url       = singer-tap-prometheus:latest
+image_url       = tap-prometheus:latest
 
-# DEV SETUP (PYTHON SPECIFIC)
 .PHONY: install-tools
 install-tools: ## installs tools which are used by other make targets
 	@POETRY_VERSION=$(poetry_version) ./dev/install-tools.sh
@@ -25,9 +24,8 @@ install-environment:
 install-dependencies: install-environment
 	@poetry install
 
-# BUILD AND PUBLISH
-.PHONY: build-image
-build-image:
+.PHONY: build-docker
+build-docker:
 	@docker build -t $(image_url) \
 		--build-arg PYTHON_VERSION=$(python_version) \
 		--build-arg POETRY_VERSION=$(poetry_version) \
@@ -35,9 +33,9 @@ build-image:
 		--progress=plain \
 		.
 
-.PHONY: start-image
-start-image:
-	@docker container run -v $$(pwd):/srv/singer-tap -it --entrypoint=/bin/bash singer-tap-prometheus:latest
+.PHONY: start-docker
+start-docker:
+	@docker container run -v $$(pwd):/srv  tap-prometheus:latest python src/core/main.py -c example_config.json
 
 .PHONY: start
 start:

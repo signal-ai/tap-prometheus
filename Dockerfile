@@ -29,14 +29,3 @@ COPY ./pyproject.toml ./poetry.lock /
 RUN poetry run pip install --no-cache-dir --upgrade pip==${PIP_VERSION} \
   && poetry install --no-dev \
   && rm -rf ~/.cache
-
-COPY . /srv
-
-########
-# This must be set to allow the prometheus client (metrics) to work on a
-# multiprocess environment (see MultiProcessorCollector).
-ENV prometheus_multiproc_dir=/tmp/prometheus
-ENV SANIC_DEBUG=no
-ENV PYTHONPATH=./src
-
-ENTRYPOINT ["/usr/bin/env", "python"]

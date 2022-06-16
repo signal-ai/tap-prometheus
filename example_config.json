@@ -1,5 +1,5 @@
 {
-    "prometheus_endpoint": "http://prometheus-a.signal",
+    "prometheus_endpoint": "http://my-prometheus.my-domain",
     "start_date": "2022-06-16T00:00:00Z",
-    "queries":{"sli_error_rate_1d":"slo:sli_error:ratio_rate1d"}
+    "queries":{"my_query_id":"my_promql_query"}
 }
