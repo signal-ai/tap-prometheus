@@ -6,6 +6,7 @@ description = "Singer tap that extracts data from Prometheus using queries provi
 authors = ["Signal AI"]
 repository = "https://github.com/signal-ai/tap-prometheus"
 homepage = "https://github.com/signal-ai/tap-prometheus"
+include = ["tap_prometheus"]
 
 [tool.poetry.scripts]
 tap-prometheus = "tap_prometheus:main"
