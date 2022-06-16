@@ -1,4 +1,3 @@
-
 python_version  = 3.7.10
 pip_version     = 21.1.1
 poetry_version  = 1.1.13
@@ -36,6 +35,10 @@ build-image:
 		--progress=plain \
 		.
 
-.PHONY: run-image
-run-image:
+.PHONY: start-image
+start-image:
 	@docker container run -v $$(pwd):/srv/singer-tap -it --entrypoint=/bin/bash singer-tap-prometheus:latest
+
+.PHONY: start
+start:
+	poetry run python src/core/main.py -c example_config.json
