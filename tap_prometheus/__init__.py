@@ -39,7 +39,7 @@ def output_results(stream_name, queries_results, extraction_time=singer.utils.no
                       'value': vector.value,
                       'timestamp': vector.timestamp}
             for (label_name, label_value) in vector.metadata.items():
-                record[f"label__{label_name}"] = label_value
+                record[f"labels__{label_name}"] = label_value
 
             singer.write_record(stream_name,
                                 record,
