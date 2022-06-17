@@ -45,9 +45,8 @@ def output_results(stream_name, queries_results, extraction_time=singer.utils.no
                                 record,
                                 time_extracted=extraction_time)
 
-def main():
-    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
+def query(args):
     queries = args.config['queries']
     client = Client(args.config['prometheus_endpoint'])
     start_date = args.config['start_date']
@@ -68,6 +67,14 @@ def main():
 
     output_results(stream_name, queries_results, extraction_time)
 
+def main():
+    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+
+    if args.discover:
+        # Catalog is not supported, output a minimal object to allow parsing
+        print(json.dumps({"streams" : []}))
+    else:
+        query(args)
 
 if __name__ == '__main__':
     main()
