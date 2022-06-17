@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import json
 import uuid
+import hashlib
 
 import singer
 from singer import utils
@@ -23,6 +24,7 @@ def construct_schema(queries_results):
     prefixed_labels = [f"labels__{label}" for label in all_labels]
     schema = {'properties': {'id': {'type': 'string'},
                              'query_id': {'type': 'string'},
+                             'labels_hash': {'type': 'string'},
                              'value': {'type': 'string'},
                              'timestamp': {'type': 'long'}}}
 
@@ -31,11 +33,20 @@ def construct_schema(queries_results):
 
     return schema
 
+def sha1(s):
+    return hashlib.sha1(s.encode()).hexdigest()
+
+def calc_labels_hash(labels):
+    return sha1(json.dumps(sorted(labels.items())))
+
 def output_results(stream_name, queries_results, extraction_time=singer.utils.now()):
     for (query_id, results) in queries_results.items():
         for vector in results.vectors:
-            record = {'id': str(uuid.uuid4()),
+            labels_hash = calc_labels_hash(vector.metadata)
+
+            record = {'id': sha1(f"{query_id}|{labels_hash}|{vector.timestamp}"),
                       'query_id': query_id,
+                      'labels_hash': labels_hash,
                       'value': vector.value,
                       'timestamp': vector.timestamp}
             for (label_name, label_value) in vector.metadata.items():
