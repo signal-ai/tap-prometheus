@@ -23,4 +23,18 @@ Configuration is as follows:
 }
 ```
 With this configuration, it will run instance queries from `queries` field (one request for each query) for the given `start_date` on the given prometheus endpoint.
+
+The inteded use case for this tap is getting started by Airflow on schedule and it's output being saved in Redshift.
 This tap does not support state.
+It also doesn't support discovery: running it with `-d` option is a no-op, this also means that catalog is not ignored.
+
+The tap outputs records with the following fields: 
+ - `id`: hash of every field except value for deduplication, primary key,
+ - `query_id`: taken from the input config,
+ - `labels_hash`: hash of the values of all `label__{label_name}` fields,
+ - `value`: metric value,
+ - `timestamp`: timestamp of the metric
+ - `label__{label_name}`: each metric label and it's value is outputted like this (flattened)
+
+Every query can output many records with different labels.
+Schema is computed automatically with all the labels in the result set (one schema per run).
