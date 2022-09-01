@@ -1,6 +1,6 @@
 python_version  = 3.7.10
-pip_version     = 21.1.1
-poetry_version  = 1.1.13
+pip_version     = {{cookiecutter.pip_version}}
+poetry_version  = $(shell cat .poetry-version)
 
 image_url       = tap-prometheus:latest
 

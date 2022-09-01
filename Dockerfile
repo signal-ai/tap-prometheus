@@ -17,12 +17,10 @@ RUN apt-get update -yqq && \
   curl build-essential git \
   && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL "https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py" > /tmp/get-poetry.py \
-  && python /tmp/get-poetry.py  \
-  && rm -rf /tmp/get-poetry.py \
+RUN curl -sSL https://install.python-poetry.org | python3 - --version "${POETRY_VERSION}" \
   && rm -rf ~/.cache
 
-ENV PATH="$PATH:/root/.poetry/bin"
+ENV PATH="$PATH:/root/.local/bin"
 
 COPY ./pyproject.toml ./poetry.lock /
 
