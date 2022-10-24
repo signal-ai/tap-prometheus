@@ -24,9 +24,8 @@ Configuration is as follows:
 ```
 With this configuration, it will run instance queries from `queries` field (one request for each query) for the given `start_date` on the given prometheus endpoint.
 
-The inteded use case for this tap is getting started by Airflow on schedule and it's output being saved in Redshift.
-This tap does not support state.
-It also doesn't support discovery: running it with `-d` option is a no-op, this also means that catalog is not ignored.
+The intended use case for this tap is getting started by Airflow on schedule and it's output being saved in a Data warehouse.
+This tap does not support state, or discovery: running it with `-d` option is a no-op, this also means that catalog is not ignored.
 
 The tap outputs records with the following fields: 
  - `id`: hash of every field except value for deduplication, primary key,
