@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 project_root="$(git rev-parse --show-toplevel)"
-export POETRY_VERSION=${POETRY_VERSION:?POETRY_VERSION must be set}
 
 # several checks for whether we're using ZSH as ZSH_VERSION didn't seem reliable
 if [ -n "$ZSH_VERSION" ] || [ "$ZSH_NAME" = "zsh" ] || [ -f "$HOME/.zshrc" ]; then
@@ -37,18 +36,8 @@ if [[ -n "$(command -v apt-get)" ]]; then
     libsqlite3-dev
 fi
 
-echo "Installing poetry $POETRY_VERSION"
+echo "Installing poetry"
 curl -sSL https://install.python-poetry.org | python3 -
 echo "poetry successfully installed. You should ensure that ~/.poetry/bin is available on your PATH"
 
 set -e
-
-# install base vscode settings.json.
-# we don't commit this as it could have individual user preferences added
-# if [ ! -f "$project_root/.vscode/settings.json" ]; then
-#   echo "Installing base Visual Studio Code project config to $PWD/.vscode/settings.json..."
-#   cp -r "$project_root/dev/.vscode/." "$project_root/.vscode/"
-#   echo "base Visual Studio Code config project successfully installed"
-# else
-#   echo "Skipping base Visual Studio Code project config installation from $project_root/dev/.vscode as $project_root/.vscode/settings.json already exists"
-# fi

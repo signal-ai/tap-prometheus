@@ -1,25 +1,18 @@
-python_version  = 3.7.10
-pip_version     = {{cookiecutter.pip_version}}
-poetry_version  = $(shell cat .poetry-version)
-
-image_url       = tap-prometheus:latest
+python_version = 3.10.7
+pip_version    = 20.3
+image_url      = tap-	prometheus:latest
 
 config = example_config.json
 
 .PHONY: install-tools
 install-tools: ## installs tools which are used by other make targets
-	@POETRY_VERSION=$(poetry_version) ./dev/install-tools.sh
-
+	./dev/install-tools.sh
 
 .PHONY: install-environment
 install-environment:
 	pyenv install --skip-existing $(python_version)
 	pyenv local $(python_version)
-# set SYSTEM_VERSION_COMPAT=1 to fix scipy install on big sur
-# https://github.com/scipy/scipy/issues/13102
-# Note: 'poetry env use' should not be necessary if pyenv is setup correctly but it acts as a fallback if it is not
-	export SYSTEM_VERSION_COMPAT=1 \
-		&& poetry env use $(python_version) \
+	poetry env use $(python_version) \
 		&& poetry run pip install --upgrade pip==$(pip_version) \
 
 .PHONY: install-dependencies
@@ -41,4 +34,8 @@ start-docker:
 
 .PHONY: start
 start:
+	poetry run tap-prometheus -c $(config)
+
+.PHONY: test
+test:
 	poetry run tap-prometheus -c $(config)
