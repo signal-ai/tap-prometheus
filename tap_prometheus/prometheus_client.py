@@ -63,7 +63,7 @@ class PrometheusClient:
             values = item.get("values")
             if not values:
                 values = [item.get("value")]
-            values = [[value[0], int(value[1])] for value in values]
+            values = [[value[0], value[1]] for value in values]
             results.append(PrometheusResult(labels=item["metric"], values=values))
         return results
 

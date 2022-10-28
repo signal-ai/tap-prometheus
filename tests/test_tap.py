@@ -56,7 +56,7 @@ def test_query(httpserver: HTTPServer):
                 "labels_hash": "385c9ae2c7b19b739a5728b38adf5297c6c03e89",
                 "query_id": "query_1",
                 "timestamp": "2015-07-01T20:10:30.781000+00:00",
-                "value": 1,
+                "value": "1",
             },
             {
                 "id": "7ec787490fc5052611881cf826fa51cf16a49b51",
@@ -66,7 +66,7 @@ def test_query(httpserver: HTTPServer):
                 "labels_hash": "d18aea204e3cdd36cd0bcf1ae8f5c1811cd54fb2",
                 "query_id": "query_1",
                 "timestamp": "2015-07-01T20:10:30.781000+00:00",
-                "value": 0,
+                "value": "0",
             },
         ]
     }
@@ -91,7 +91,7 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                             "job": "node",
                             "instance": "localhost:9091",
                         },
-                        "value": [1435781430.781, "0"],
+                        "value": [1435781430.781, "0.9995969209792307"],
                     },
                 ],
             },
@@ -118,7 +118,7 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                 "labels_hash": "a7520dca2ca10ef6bc0db4c018d8eafe78fb7a74",
                 "query_id": "query_1",
                 "timestamp": "2015-07-01T20:10:30.781000+00:00",
-                "value": 1,
+                "value": "1",
             },
             {
                 "id": "190710b2ac1e16c9d093ade016b7bc814e54bb11",
@@ -127,7 +127,7 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                 "labels_hash": "eadb16ede95a4076e4396c4ee8d3e2346febf9dc",
                 "query_id": "query_1",
                 "timestamp": "2015-07-01T20:10:30.781000+00:00",
-                "value": 0,
+                "value": "0.9995969209792307",
             },
         ]
     }
