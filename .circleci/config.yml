@@ -12,7 +12,7 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: poetry
-      - verify:
+      - run:
           command: make verify
       - run:
           command: make test
