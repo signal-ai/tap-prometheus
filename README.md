@@ -1,5 +1,7 @@
 # tap-prometheus
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/signal-ai/tap-prometheus/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/signal-ai/tap-prometheus/tree/main)
+
 [Singer](https://www.singer.io/) tap that extracts data from [Prometheus](https://prometheus.io/) using queries provided in config and produces JSON-formatted data following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/docs/SPEC.md).
 
 ## Building and running locally
