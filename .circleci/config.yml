@@ -5,9 +5,12 @@ orbs:
 
 jobs:
   build:
+    parameters:
+      python-version:
+        type: string
     executor:
       name: python/default
-      tag: 3.8
+      tag: << parameters.python-version >>
     steps:
       - checkout
       - python/install-packages:
@@ -20,4 +23,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
+      - build:
+          matrix:
+            parameters:
+              python-version: ["3.8", "3.9", "3.10"]
