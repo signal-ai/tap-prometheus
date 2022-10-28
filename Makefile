@@ -14,6 +14,7 @@ install-environment:
 	pyenv local $(python_version)
 	poetry env use $(python_version) \
 		&& poetry run pip install --upgrade pip==$(pip_version) \
+		&& poetry run pre-commit install --install-hooks
 
 .PHONY: install-dependencies
 install-dependencies: install-environment
@@ -36,6 +37,14 @@ start-docker:
 start:
 	poetry run tap-prometheus -c $(config)
 
+.PHONY: dev-run
+dev-run:
+	poetry run tap-prometheus -c $(config)
+
 .PHONY: test
 test:
-	poetry run tap-prometheus -c $(config)
+	poetry run pytest
+
+.PHONY: verify
+verify:
+	poetry run pre-commit run --all-files

@@ -13,12 +13,25 @@ tap-prometheus = "tap_prometheus:main"
 [tool.poetry.dependencies]
 python = ">=3.8.0,<4.0.0"
 singer-python = "5.12.2"
-prometheus-api-client = "^0.5.2"
+requests = "^2.28.1"
+urllib3 = "^1.26.12"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
 pytest-httpserver = "^1.0.6"
+pre-commit = "^2.20.0"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pycln]
+all = true
+quiet = true
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100

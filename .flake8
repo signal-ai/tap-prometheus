@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 80
+max-complexity = 18
+select = C,E,F,W,B,B950
+# E501: Line too long (82 &gt; 79 characters)
+# W503: Line break occurred before a binary operator
+# E203: Breaks with Black
+# E301,E302,E303,E304,E305,E306: blank lines, annoying and autofixed by black
+# E303: too many blank lines, annoying and autofixed by black
+# C901: complexity
+ignore = E501,W503,E203,E301,E302,E303,E304,E305,E30, C901
+per-file-ignores =
+exclude =
+    .git,
+    .venv,
+    .circleci,

@@ -1,7 +1,8 @@
 import datetime
 
-import tap_prometheus as tap
 from pytest_httpserver import HTTPServer
+
+import tap_prometheus as tap
 
 
 def test_query(httpserver: HTTPServer):
@@ -50,21 +51,27 @@ def test_query(httpserver: HTTPServer):
     assert result["records"] == {
         "query_1": [
             {
-                "id": "d056117cba16f8b10eca3f00d80f19c25a24c8d8",
+                "id": "9455c3fe84216e53d89a8643797fb399549461b8",
                 "labels__instance": "localhost:9090",
                 "labels__job": "prometheus",
-                "labels_hash": "a7520dca2ca10ef6bc0db4c018d8eafe78fb7a74",
+                "labels__name": "up",
+                "labels_hash": "385c9ae2c7b19b739a5728b38adf5297c6c03e89",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(2015, 7, 1, 20, 10, 30, 780999),
+                "timestamp": datetime.datetime(
+                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
+                ),
                 "value": 1,
             },
             {
-                "id": "5da0e61681c1c3acebdcf8609fb4edfdb7c4a33f",
+                "id": "7ec787490fc5052611881cf826fa51cf16a49b51",
                 "labels__instance": "localhost:9091",
                 "labels__job": "node",
-                "labels_hash": "eadb16ede95a4076e4396c4ee8d3e2346febf9dc",
+                "labels__name": "up",
+                "labels_hash": "d18aea204e3cdd36cd0bcf1ae8f5c1811cd54fb2",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(2015, 7, 1, 20, 10, 30, 780999),
+                "timestamp": datetime.datetime(
+                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
+                ),
                 "value": 0,
             },
         ]
@@ -115,21 +122,25 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
     assert result["records"] == {
         "query_1": [
             {
-                "id": "d056117cba16f8b10eca3f00d80f19c25a24c8d8",
+                "id": "d8af591e3b46ac1d463c24762216f6dd43bcd18b",
                 "labels__instance": "localhost:9090",
                 "labels__job": "prometheus",
                 "labels_hash": "a7520dca2ca10ef6bc0db4c018d8eafe78fb7a74",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(2015, 7, 1, 20, 10, 30, 780999),
+                "timestamp": datetime.datetime(
+                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
+                ),
                 "value": 1,
             },
             {
-                "id": "5da0e61681c1c3acebdcf8609fb4edfdb7c4a33f",
+                "id": "190710b2ac1e16c9d093ade016b7bc814e54bb11",
                 "labels__instance": "localhost:9091",
                 "labels__job": "node",
                 "labels_hash": "eadb16ede95a4076e4396c4ee8d3e2346febf9dc",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(2015, 7, 1, 20, 10, 30, 780999),
+                "timestamp": datetime.datetime(
+                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
+                ),
                 "value": 0,
             },
         ]
