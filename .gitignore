@@ -1,3 +1,5 @@
 *.pyc
 # Ignore production config
 config.json
+.pytest_cache
+.venv
