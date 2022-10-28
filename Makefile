@@ -37,10 +37,6 @@ start-docker:
 start:
 	poetry run tap-prometheus -c $(config)
 
-.PHONY: dev-run
-dev-run:
-	poetry run tap-prometheus -c $(config)
-
 .PHONY: test
 test:
 	poetry run pytest
