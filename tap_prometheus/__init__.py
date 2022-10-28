@@ -2,9 +2,10 @@ import datetime
 import hashlib
 import json
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import singer
+from dateutil import parser
 from singer import utils
 
 from tap_prometheus.prometheus_client import PrometheusClient, PrometheusResult
@@ -14,12 +15,13 @@ LOGGER = singer.get_logger()
 REQUIRED_CONFIG_KEYS = ["queries", "prometheus_endpoint", "start_date", "stream_name"]
 
 
-def construct_schema(records):
+def construct_schema(records: Dict[str, List[Dict[str, Any]]]):
     all_labels = set()
-    for record in records:
-        for key in record.keys():
-            if key.startswith("labels__"):
-                all_labels.add(key)
+    for named_record in records.values():
+        for record in named_record:
+            for key in record.keys():
+                if key.startswith("labels__"):
+                    all_labels.add(key)
 
     schema = {
         "properties": {
@@ -68,7 +70,7 @@ def parse_metrics(query_id, query_result: List[PrometheusResult]):
                         "id": sha1(f"{query_id}|{labels_hash}|{dt_epoch}"),
                         "timestamp": datetime.datetime.fromtimestamp(
                             dt_epoch, tz=datetime.timezone.utc
-                        ),
+                        ).isoformat(),
                         "query_id": query_id,
                         "labels_hash": labels_hash,
                         "value": value,
@@ -87,11 +89,12 @@ class TapConfig:
 
 
 def parse_tap_config(config):
-    enable_ssl = config.get("enable_ssl", True)
+    enable_ssl = config.get("enable_ssl", config["prometheus_endpoint"].startswith("https"))
+    parsed_time = parser.parse(config["start_date"])
     return TapConfig(
         queries=config["queries"],
         client=PrometheusClient(url=config["prometheus_endpoint"], enable_ssl=enable_ssl),
-        start_date=config["start_date"],
+        start_date=parsed_time.isoformat(),
         stream_name=config["stream_name"],
     )
 
@@ -107,7 +110,7 @@ def query(config: TapConfig):
     return {"extraction_time": extraction_time, "records": records}
 
 
-def write_query_results_in_singer_format(extraction_time, result, config: TapConfig):
+def write_query_results_in_singer_format(result, config: TapConfig):
     extraction_time = result["extraction_time"]
     records = result["records"]
 
@@ -116,6 +119,7 @@ def write_query_results_in_singer_format(extraction_time, result, config: TapCon
 
     for records in records.values():
         for record in records:
+            LOGGER.debug("Record %s", record)
             singer.write_record(config.stream_name, record, time_extracted=extraction_time)
 
 

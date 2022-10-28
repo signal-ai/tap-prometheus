@@ -27,6 +27,8 @@ Configuration is as follows:
 }
 ```
 
+`enable_ssl` can optionally be set to `false` to explicitly disable TLS verification, else it will be inferred from the schema of the `proemtheus_endpoint`.
+
 With this configuration, it will run instance queries from `queries` field (one request for each query) for the given `start_date` on the given prometheus endpoint.
 
 The intended use case for this tap is getting started by Airflow on schedule and it's output being saved in a Data warehouse.

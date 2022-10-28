@@ -3,8 +3,11 @@ from typing import Dict, List, Tuple
 from urllib.parse import urlparse
 
 import requests
+import singer
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
+
+LOGGER = singer.get_logger()
 
 
 def _default_retry_client():
@@ -57,7 +60,10 @@ class PrometheusClient:
     def _parse_query_result(self, result) -> List[PrometheusResult]:
         results = []
         for item in result:
-            values = [[value[0], int(value[1])] for value in item["values"]]
+            values = item.get("values")
+            if not values:
+                values = [item.get("value")]
+            values = [[value[0], int(value[1])] for value in values]
             results.append(PrometheusResult(labels=item["metric"], values=values))
         return results
 

@@ -1,5 +1,3 @@
-import datetime
-
 from pytest_httpserver import HTTPServer
 
 import tap_prometheus as tap
@@ -57,9 +55,7 @@ def test_query(httpserver: HTTPServer):
                 "labels__name": "up",
                 "labels_hash": "385c9ae2c7b19b739a5728b38adf5297c6c03e89",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(
-                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
-                ),
+                "timestamp": "2015-07-01T20:10:30.781000+00:00",
                 "value": 1,
             },
             {
@@ -69,9 +65,7 @@ def test_query(httpserver: HTTPServer):
                 "labels__name": "up",
                 "labels_hash": "d18aea204e3cdd36cd0bcf1ae8f5c1811cd54fb2",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(
-                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
-                ),
+                "timestamp": "2015-07-01T20:10:30.781000+00:00",
                 "value": 0,
             },
         ]
@@ -90,18 +84,14 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                             "job": "prometheus",
                             "instance": "localhost:9090",
                         },
-                        "values": [
-                            [1435781430.781, "1"],
-                        ],
+                        "value": [1435781430.781, "1"],
                     },
                     {
                         "metric": {
                             "job": "node",
                             "instance": "localhost:9091",
                         },
-                        "values": [
-                            [1435781430.781, "0"],
-                        ],
+                        "value": [1435781430.781, "0"],
                     },
                 ],
             },
@@ -127,9 +117,7 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                 "labels__job": "prometheus",
                 "labels_hash": "a7520dca2ca10ef6bc0db4c018d8eafe78fb7a74",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(
-                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
-                ),
+                "timestamp": "2015-07-01T20:10:30.781000+00:00",
                 "value": 1,
             },
             {
@@ -138,9 +126,7 @@ def test_query_with_no_name_in_result(httpserver: HTTPServer):
                 "labels__job": "node",
                 "labels_hash": "eadb16ede95a4076e4396c4ee8d3e2346febf9dc",
                 "query_id": "query_1",
-                "timestamp": datetime.datetime(
-                    2015, 7, 1, 20, 10, 30, 781000, tzinfo=datetime.timezone.utc
-                ),
+                "timestamp": "2015-07-01T20:10:30.781000+00:00",
                 "value": 0,
             },
         ]

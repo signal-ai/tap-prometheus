@@ -1,6 +1,6 @@
 {
   "stream_name": "prometheus",
-  "prometheus_endpoint": "http://my-prometheus.my-domain",
-  "start_date": "2022-06-16T00:00:00Z",
-  "queries": { "my_query_id": "my_promql_query" }
+  "prometheus_endpoint": "http://example-prometheus-net",
+  "start_date": "2022-10-27T00:00:00.00Z",
+  "queries": { "count_by_job": "count(up) by (job)" }
 }
