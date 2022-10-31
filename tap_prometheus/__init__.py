@@ -29,7 +29,10 @@ def construct_schema(records: Dict[str, List[Dict[str, Any]]]):
             "query_id": {"type": "string"},
             "labels_hash": {"type": "string"},
             "value": {"type": "string"},
-            "timestamp": {"type": "long"},
+            "timestamp": {
+                "type": "string",
+                "format": "date-time"
+            },
         }
     }
 
@@ -68,11 +71,10 @@ def parse_metrics(query_id, query_result: List[PrometheusResult]):
                     **label_cols,
                     **{
                         "id": sha1(f"{query_id}|{labels_hash}|{dt_epoch}"),
-                        "timestamp": int(
+                        "timestamp":
                             datetime.datetime.fromtimestamp(
                                 dt_epoch, tz=datetime.timezone.utc
-                            ).timestamp()
-                        ),
+                            ).isoformat(),
                         "query_id": query_id,
                         "labels_hash": labels_hash,
                         "value": value,
