@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 from urllib.parse import urlparse
 
 import requests
@@ -20,8 +19,8 @@ def _default_retry_client():
 
 @dataclass
 class PrometheusResult:
-    labels: Dict[str, str]
-    values: List[Tuple[float, str]]
+    labels: dict[str, str]
+    values: list[tuple[float, str]]
 
 
 class PrometheusClient:
@@ -39,7 +38,7 @@ class PrometheusClient:
     def __init__(
         self,
         url: str = "http://127.0.0.1:9090",
-        headers: dict = None,
+        headers: dict | None = None,
         enable_ssl: bool = True,
         retry: Retry = None,
     ):
@@ -57,7 +56,7 @@ class PrometheusClient:
         self._session = requests.Session()
         self._session.mount(self.url, HTTPAdapter(max_retries=retry))
 
-    def _parse_query_result(self, result) -> List[PrometheusResult]:
+    def _parse_query_result(self, result) -> list[PrometheusResult]:
         results = []
         for item in result:
             values = item.get("values")
@@ -67,7 +66,7 @@ class PrometheusClient:
             results.append(PrometheusResult(labels=item["metric"], values=values))
         return results
 
-    def query(self, query: str, params: dict = None):
+    def query(self, query: str, params: dict | None = None):
         """
         Send a query to Prometheus.
 

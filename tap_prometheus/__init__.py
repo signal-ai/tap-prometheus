@@ -2,7 +2,7 @@ import datetime
 import hashlib
 import json
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 
 import singer
 from dateutil import parser
@@ -15,7 +15,7 @@ LOGGER = singer.get_logger()
 REQUIRED_CONFIG_KEYS = ["queries", "prometheus_endpoint", "start_date", "stream_name"]
 
 
-def construct_schema(records: Dict[str, List[Dict[str, Any]]]):
+def construct_schema(records: dict[str, list[dict[str, Any]]]):
     all_labels = set()
     for named_record in records.values():
         for record in named_record:
@@ -40,20 +40,20 @@ def construct_schema(records: Dict[str, List[Dict[str, Any]]]):
 
 
 def sha1(s):
-    return hashlib.sha1(s.encode()).hexdigest()
+    return hashlib.sha1(s.encode()).hexdigest()  # noqa: S324
 
 
-def calc_labels_hash(labels: Dict):
+def calc_labels_hash(labels: dict):
     return sha1(json.dumps(sorted(labels.items())))
 
 
-def parse_metrics(query_id, query_result: List[PrometheusResult]):
+def parse_metrics(query_id, query_result: list[PrometheusResult]):
     records = []
 
     for result in query_result:
         labels_hash = calc_labels_hash(result.labels)
         label_cols = {}
-        for (label_name, label_value) in result.labels.items():
+        for label_name, label_value in result.labels.items():
             if label_name == "__name__":
                 label_cols["labels__name"] = label_value
             else:
@@ -69,7 +69,7 @@ def parse_metrics(query_id, query_result: List[PrometheusResult]):
                     **{
                         "id": sha1(f"{query_id}|{labels_hash}|{dt_epoch}"),
                         "timestamp": datetime.datetime.fromtimestamp(
-                            dt_epoch, tz=datetime.timezone.utc
+                            dt_epoch, tz=datetime.UTC
                         ).isoformat(),
                         "query_id": query_id,
                         "labels_hash": labels_hash,
@@ -89,11 +89,15 @@ class TapConfig:
 
 
 def parse_tap_config(config):
-    enable_ssl = config.get("enable_ssl", config["prometheus_endpoint"].startswith("https"))
+    enable_ssl = config.get(
+        "enable_ssl", config["prometheus_endpoint"].startswith("https")
+    )
     parsed_time = parser.parse(config["start_date"])
     return TapConfig(
         queries=config["queries"],
-        client=PrometheusClient(url=config["prometheus_endpoint"], enable_ssl=enable_ssl),
+        client=PrometheusClient(
+            url=config["prometheus_endpoint"], enable_ssl=enable_ssl
+        ),
         start_date=parsed_time.isoformat(),
         stream_name=config["stream_name"],
     )
@@ -103,7 +107,7 @@ def query(config: TapConfig):
     records = {}
     extraction_time = utils.now()
 
-    for (query_id, query) in config.queries.items():
+    for query_id, query in config.queries.items():
         query_result = config.client.query(query, params={"time": config.start_date})
         records[query_id] = parse_metrics(query_id, query_result)
 
@@ -117,11 +121,13 @@ def write_query_results_in_singer_format(result, config: TapConfig):
     schema = construct_schema(records)
     singer.write_schema(config.stream_name, schema, ["id"])
 
-    for records in records.values():
-        for record in records:
-            if record is not None:
-                LOGGER.debug("Record %s", record)
-                singer.write_record(config.stream_name, record, time_extracted=extraction_time)
+    for rs in records.values():
+        for r in rs:
+            if r is not None:
+                LOGGER.debug("Record %s", r)
+                singer.write_record(
+                    config.stream_name, r, time_extracted=extraction_time
+                )
 
 
 def main():
