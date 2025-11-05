@@ -119,8 +119,9 @@ def write_query_results_in_singer_format(result, config: TapConfig):
 
     for records in records.values():
         for record in records:
-            LOGGER.debug("Record %s", record)
-            singer.write_record(config.stream_name, record, time_extracted=extraction_time)
+            if record is not None:
+                LOGGER.debug("Record %s", record)
+                singer.write_record(config.stream_name, record, time_extracted=extraction_time)
 
 
 def main():
