@@ -69,7 +69,7 @@ def parse_metrics(query_id, query_result: list[PrometheusResult]):
                     **{
                         "id": sha1(f"{query_id}|{labels_hash}|{dt_epoch}"),
                         "timestamp": datetime.datetime.fromtimestamp(
-                            dt_epoch, tz=datetime.UTC
+                            dt_epoch, tz=datetime.timezone.utc
                         ).isoformat(),
                         "query_id": query_id,
                         "labels_hash": labels_hash,
